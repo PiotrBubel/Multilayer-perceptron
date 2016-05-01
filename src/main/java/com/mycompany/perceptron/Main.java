@@ -17,7 +17,6 @@ public class Main {
         //wykres bledu - suma bledow kwadratowych miedzy punktem a tym co zwraca siec
         //wykres: pionowa oś - wartość błędu, pozioma oś - kolejne epoki nauki
 
-        //perceptron();
 
         generateTransformationRaports();
     }

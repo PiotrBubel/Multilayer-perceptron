@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.perceptron;
 
 import java.util.ArrayList;
@@ -50,10 +45,10 @@ public class ConnectedNeuralNetwork {
         connectNeurons();
     }
 
-    public double[] lastHiddenLayerOutput(){
+    public double[] lastHiddenLayerOutput() {
         List<Double> outputsList = new ArrayList<>();
 
-        for(ConnectedNeuron n : this.layers.get(layers.size()-2)){
+        for (ConnectedNeuron n : this.layers.get(layers.size() - 2)) {
             outputsList.add(n.getLastOutput());
         }
 

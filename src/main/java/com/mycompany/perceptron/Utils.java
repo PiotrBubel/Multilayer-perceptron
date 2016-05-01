@@ -41,9 +41,9 @@ public class Utils {
         return newList;
     }
 
-    public static double[][] shake(double[][] array){
+    public static double[][] shake(double[][] array) {
         List<double[]> doubleList = new ArrayList<>();
-        for(double[] d : array){
+        for (double[] d : array) {
             doubleList.add(d);
         }
 
@@ -86,4 +86,5 @@ public class Utils {
             System.out.print(df.format(d) + "  ");
         }
     }
+
 }
