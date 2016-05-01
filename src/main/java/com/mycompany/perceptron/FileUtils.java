@@ -1,0 +1,156 @@
+package com.mycompany.perceptron;
+
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class FileUtils {
+
+    public static void saveArray(String filePath, double[][] data) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(filePath))) {
+            //DecimalFormat df = new DecimalFormat("0.000");
+            for (double[] line : data) {
+                for (double value : line) {
+                    //out.print(df.format(value));
+                    out.print(value);
+                    out.print(" ");
+                }
+                out.println();
+            }
+        } catch (FileNotFoundException ex) {
+        }
+    }
+
+    //public static void saveOutput(String filePath, List<double[]> data) {
+    //    int sizeX = data.size();
+    //    int sizeY = data.get(0).length;
+    //    FileUtils.saveOutput(filePath, data.toArray(new double[sizeX][sizeY]));
+    //}
+
+    public static void saveList(String filePath, List<List<Double>> data) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(filePath))) {
+            DecimalFormat df = new DecimalFormat("0.000");
+            for (List<Double> line : data) {
+                for (double value : line) {
+                    out.print(df.format(value));
+                    out.print(" ");
+                }
+                out.println();
+            }
+        } catch (FileNotFoundException ex) {
+        }
+    }
+
+
+    public static List<List<Double>> loadDataLists(String filePath) {
+        List<List<Double>> listOfLists = new ArrayList<>();
+        try (Scanner sc = new Scanner(new FileReader(filePath))) {
+            int l = 0;
+            while (sc.hasNext()) {
+                String line = sc.nextLine();
+                String[] values = line.split(" ");
+                listOfLists.add(new ArrayList<Double>());
+                for (String v : values) {
+                    //System.out.println(v);
+                    listOfLists.get(l).add(Double.parseDouble(v.replaceAll(",", ".")));
+                }
+                l++;
+            }
+        } catch (FileNotFoundException ex) {
+
+        }
+        return listOfLists;
+    }
+
+    public static double[][] loadDataArrays(String filePath) {
+        List<List<Double>> listOfLists = loadDataLists(filePath);
+        int x = listOfLists.size();
+        int y = listOfLists.get(0).size();
+        double[][] arrayOfArrays = new double[x][y];
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                arrayOfArrays[i][j] = listOfLists.get(i).get(j);
+            }
+        }
+        return arrayOfArrays;
+    }
+
+    public static void addPoint(String filePath, double[] p) {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(filePath, true))) {
+            out.append(String.valueOf(p[0]));
+            out.append(" ");
+            out.append(String.valueOf(p[1]));
+            out.newLine();
+
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void generateNetworkReport(String reportFilePath, String reportHeader, ConnectedNeuralNetwork network, double[][] testSet, double[][] expectedOutputs) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(reportFilePath))) {
+            DecimalFormat df = new DecimalFormat("0.0000");
+            out.println(reportHeader);
+            out.println();
+            for (int i = 0; i < expectedOutputs.length; i++) {
+
+                out.print("Network inputs \t\t");
+                for (double in : testSet[i]) {
+                    out.print(df.format(in) + ", \t");
+                }
+                out.println();
+                out.print("Network outputs \t");
+                double[] outputs = network.output(testSet[i]);
+                for (double outs : outputs) {
+                    out.print(df.format(outs) + ", \t");
+                }
+                out.println();
+                out.print("Expected outputs \t");
+                for (double outs : expectedOutputs[i]) {
+                    out.print(df.format(outs) + ", \t");
+                }
+
+                out.println();
+                out.print("Error \t");
+                double error = Utils.countError(outputs, expectedOutputs[i]);
+                out.print(error);
+
+                out.println();
+                out.print("Hidden layer outputs \t");
+                double[] hiddenOutputs = network.lastHiddenLayerOutput();
+                for (double outs : hiddenOutputs) {
+                    out.print(df.format(outs) + ", \t");
+                }
+                out.println();
+                out.println();
+            }
+            out.println();
+            out.println("--end of report--");
+
+        } catch (FileNotFoundException ex) {
+        }
+    }
+
+    public static void saveSinglePlotCommand(String plotFilePath, String outpuFilePath, String pointsPath, String plotTitle) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
+            out.println("set terminal png size 800,600");
+            out.println("set output '" + outpuFilePath + "'");
+            out.println("set title \"" + plotTitle + "\"");
+            out.println("plot \"" + pointsPath + "\" title \"Points\"");
+            out.println();
+        } catch (FileNotFoundException ex) {
+        }
+    }
+
+}
