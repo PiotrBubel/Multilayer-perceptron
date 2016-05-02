@@ -1,5 +1,6 @@
 package com.mycompany.perceptron;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,4 +88,13 @@ public class Utils {
         }
     }
 
+    public static void runGnuplotScript(String scriptName) throws IOException {
+        Process gnuplot;
+        gnuplot = Runtime.getRuntime().exec("gnuplot " + scriptName);
+        try {
+            gnuplot.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

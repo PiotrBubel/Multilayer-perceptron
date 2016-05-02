@@ -18,7 +18,7 @@ public class Main {
         //wykres: pionowa oś - wartość błędu, pozioma oś - kolejne epoki nauki
 
 
-        generateTransformationRaports();
+        TransformationProcedures.generateRaports();
     }
 
     public static void perceptron() {
@@ -110,133 +110,6 @@ public class Main {
         }
     }
 
-    /**
-     * Stworzyć sieć neuronową (MLP) o 4 wejściach i 4 wyjściach oraz jedną warstwą ukrytą. Należy
-     * nauczyć sieć z wykorzystaniem poniższych danych wejściowych: transformation.txt
-     *
-     * zakładając, że na wyjściu sieci te same dane powinny zostać odtworzone. Wszystkie
-     * eksperymenty należy powtórzyć dla 1, 2 oraz 3 neuronów w warstwie ukrytej. Wszystkie neurony
-     * powinny posiadać sigmoidalną funkcję aktywacji. Należy przetestować sieci z biasem i bez
-     * biasu. Format pliku z danymi wejściowymi zawiera kolejne dane wejściowe zawarte w kolejnych
-     * liniach (oddzielone spacją).
-     *
-     * W sprawozdaniu należy zwrócić uwagę na następujące rzeczy:
-     *
-     * Jak zmienia się błąd średniokwadratowy  po każdej epoce nauki na zbiorze treningowym? Jak
-     * wpływają parametry nauki (współczynnik nauki i momentum) na szybkość nauki? Jak wpływa
-     * obecność lub brak obecności biasu na proces nauki? Jak można interpretować wyjścia z warstwy
-     * ukrytej w tego rodzaju sieci?
-     */
-    public static void generateTransformationRaports() {
-        int hiddenNeurons;
-        int epochs;
-        String outputFile = "_transformation";
-
-        //kazdy blok to przypadek testowy ktory wygeneruje raport
-        //raport sklada sie z pliku png z wykresem bledu sredniokwadratowego i opisem parametrow
-        //  oraz pliku txt ze szczegolowym raportem
-
-        //przy dodawaniu przypadkow testowych trzeba zmieniac nazwe pliku, zeby nie nadpisalo poprzedniego reportu
-        //mozna dodawac dowolnie duzo przypadkow testowych z rownymi danymi, dla kazdego wygenerowany zostanie raport
-
-        hiddenNeurons = 1;
-        outputFile = outputFile + "1";
-        ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = false;
-        epochs = 500;
-        Main.performTransformation(epochs, hiddenNeurons, outputFile);
-
-        hiddenNeurons = 1;
-        outputFile = outputFile.replace('1', '2');
-        ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 500;
-        Main.performTransformation(epochs, hiddenNeurons, outputFile);
-
-        hiddenNeurons = 2;
-        outputFile = outputFile.replace('2', '3');
-        ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = false;
-        epochs = 500;
-        Main.performTransformation(epochs, hiddenNeurons, outputFile);
-
-        hiddenNeurons = 2;
-        outputFile = outputFile.replace('3', '4');
-        ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 500;
-        Main.performTransformation(epochs, hiddenNeurons, outputFile);
-
-        hiddenNeurons = 3;
-        outputFile = outputFile.replace('4', '5');
-        ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = false;
-        epochs = 500;
-        Main.performTransformation(epochs, hiddenNeurons, outputFile);
-
-        hiddenNeurons = 3;
-        outputFile = outputFile.replace('5', '6');
-        ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 500;
-        Main.performTransformation(epochs, hiddenNeurons, outputFile);
-
-    }
-
-    public static void performTransformation(int epochs, int hiddenNeurons, String outputFile) {
-        ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(4, 4, hiddenNeurons, 1);
-        double[][] learningSet = FileUtils.loadDataArrays("transformation.txt");
-
-        File f = new File("_transformation_error.txt");
-        f.delete();
-
-        for (int i = 0; i < epochs; i++) {
-            //epoka nauki
-            double err = 0;
-            double[][] mixedSet = Utils.shake(learningSet);
-            for (double[] data : mixedSet) {
-                network.learn(data, data);
-                err = err + Utils.countError(network.output(data), data);
-            }
-            FileUtils.addPoint("_transformation_error.txt", new double[]{i, err * 0.25});
-        }
-
-        String header = "Epoki: " + epochs + ", step: " + ConnectedNeuron.STEP + ", " +
-                "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
-                ",  " + hiddenNeurons + " neurony ukryte.";
-
-        FileUtils.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, learningSet);
-        FileUtils.saveSinglePlotCommand("_transformationPlot",
-                outputFile + ".png",
-                "_transformation_error.txt",
-                "Blad sredniokwadratowy." + header);
-
-        Process gnuplot;
-        try {
-            gnuplot = Runtime.getRuntime().exec("gnuplot _transformationPlot");
-            try {
-                gnuplot.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Wygenerowano pliki raportu: " + outputFile);
-        } catch (IOException ex) {
-            System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
-        }
-
-    }
 
     /**
      * Aproksymacja (maksymalna ocena 4)
