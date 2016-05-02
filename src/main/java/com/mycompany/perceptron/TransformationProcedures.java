@@ -148,11 +148,12 @@ public class TransformationProcedures {
                 network.learn(data, data);
                 err = err + Utils.countError(network.output(data), data);
             }
-            FileUtils.addPoint(errorsFilePath, new double[]{i, err * 0.25});
+            err = err * 0.25;
+            FileUtils.addPoint(errorsFilePath, new double[]{i, err});
         }
 
         DecimalFormat df = new DecimalFormat("0.00000");
-        String header = "Epoki: " + epochs + ", ostatni blad: " + df.format(err * 0.25) +
+        String header = "Epoki: " + epochs + ", ostatni blad: " + df.format(err) +
                 ",\\n step: " + ConnectedNeuron.STEP + ", " +
                 "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
                 ",  " + hiddenNeurons + " neurony ukryte.";
@@ -202,7 +203,8 @@ public class TransformationProcedures {
                 network.learn(data, data);
                 err = err + Utils.countError(network.output(data), data);
             }
-            FileUtils.addPoint(errorsFilePath, new double[]{epochs, err * 0.25});
+            err = err * 0.25;
+            FileUtils.addPoint(errorsFilePath, new double[]{epochs, err});
             epochs++;
 
             if (epochs % 10000 == 0) {
@@ -210,7 +212,7 @@ public class TransformationProcedures {
             }
         }
         DecimalFormat df = new DecimalFormat("0.00000");
-        String header = "Oczekiwany blad: " + expectedError + ", ostatni blad: " + df.format(err * 0.25) +
+        String header = "Oczekiwany blad: " + expectedError + ", ostatni blad: " + df.format(err) +
                 ", epoki: " + epochs + ", \\n step: " + ConnectedNeuron.STEP + ", " +
                 "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
                 ",  " + hiddenNeurons + " neurony ukryte.";
