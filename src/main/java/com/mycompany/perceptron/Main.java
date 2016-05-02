@@ -1,7 +1,7 @@
 package com.mycompany.perceptron;
 
-import java.io.File;
-import java.io.IOException;
+import com.mycompany.perceptron.procedures.TransformationProcedures;
+
 import java.util.*;
 
 public class Main {
@@ -108,40 +108,6 @@ public class Main {
                 Utils.print(network.output(test5));
             }
         }
-    }
-
-
-    /**
-     * Aproksymacja (maksymalna ocena 4)
-     *
-     * Stworzyć sieć neuronową (MLP) z jednym wejściem i jednym wyjściem. Sieć powinna mieć jedną
-     * warstwę ukrytą z neuronami o sigmoidalnej funkcji aktywacji oraz warstwę wyjściową z neuronem
-     * z identycznościową funkcją aktywacji (neuron liniowy). Korzystając z poniższych danych
-     * treningowych (wszystkie eksperymenty należy przeprowadzić dla obu zbiorów):
-     *
-     * approximation_train_1.txt approximation_train_2.txt
-     *
-     * należy nauczyć sieci dla liczby neuronów w wartwie ukrytej od 1 do 20. Należy przetestować
-     * sieci z biasem. Nauczona sieć powinna aproksymować funkcję (przybliżać jej wartości) dla
-     * danych, które nie były w zbiorze treningowym. W celu sprawdzenia jakości aproksymacji należy
-     * każdorazowo skorzystać z poniższego zbioru testowego:
-     *
-     * approximation_test.txt
-     *
-     * Zarówno pliki zawierające zbiory treningowe, jak i plik zawierający dane testowe mają ten sam
-     * format - w każdej linii zawarte są wejście i odpowiadającej jej wyjście (oddzielone spacją).
-     * Jako ocenę jakości aproksymacji należy rozważyć błąd średniokwadratowy na zbiorze testowym.
-     *
-     * W sprawozdaniu należy zwrócić uwagę na następujące rzeczy:
-     *
-     * Jak zmienia się błąd średniokwadratowy po każdej epoce nauki na zbiorze treningowym i zbiorze
-     * testowym? Jaka liczba neuronów w warstwie ukrytej jest potrzebna, aby sieć dokonywała
-     * poprawnej aproksymacji? Kiedy można uznać, że sieć jest nauczona? Jak wpływają parametry
-     * nauki (współczynnik nauki i momentum) na szybkość nauki? Jak wyglądają wykresy funkcji
-     * aproksymowanej przez sieć w porównaniu z rozkładem punktów treningowych?
-     */
-    public static void approximation() {
-
     }
 
     /**

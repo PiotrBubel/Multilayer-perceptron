@@ -1,4 +1,9 @@
-package com.mycompany.perceptron;
+package com.mycompany.perceptron.procedures;
+
+import com.mycompany.perceptron.ConnectedNeuralNetwork;
+import com.mycompany.perceptron.ConnectedNeuron;
+import com.mycompany.perceptron.FileUtils;
+import com.mycompany.perceptron.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,29 +12,41 @@ import java.text.DecimalFormat;
 /**
  * Created by Piotrek on 02.05.2016.
  */
-public class TransformationProcedures {
+public class ApproximationProcedures {
 
     /**
-     * Stworzyć sieć neuronową (MLP) o 4 wejściach i 4 wyjściach oraz jedną warstwą ukrytą. Należy
-     * nauczyć sieć z wykorzystaniem poniższych danych wejściowych: transformation.txt
+     * Aproksymacja (maksymalna ocena 4)
      *
-     * zakładając, że na wyjściu sieci te same dane powinny zostać odtworzone. Wszystkie
-     * eksperymenty należy powtórzyć dla 1, 2 oraz 3 neuronów w warstwie ukrytej. Wszystkie neurony
-     * powinny posiadać sigmoidalną funkcję aktywacji. Należy przetestować sieci z biasem i bez
-     * biasu. Format pliku z danymi wejściowymi zawiera kolejne dane wejściowe zawarte w kolejnych
-     * liniach (oddzielone spacją).
+     * Stworzyć sieć neuronową (MLP) z jednym wejściem i jednym wyjściem. Sieć powinna mieć jedną
+     * warstwę ukrytą z neuronami o sigmoidalnej funkcji aktywacji oraz warstwę wyjściową z neuronem
+     * z identycznościową funkcją aktywacji (neuron liniowy). Korzystając z poniższych danych
+     * treningowych (wszystkie eksperymenty należy przeprowadzić dla obu zbiorów):
+     *
+     * approximation_train_1.txt approximation_train_2.txt
+     *
+     * należy nauczyć sieci dla liczby neuronów w wartwie ukrytej od 1 do 20. Należy przetestować
+     * sieci z biasem. Nauczona sieć powinna aproksymować funkcję (przybliżać jej wartości) dla
+     * danych, które nie były w zbiorze treningowym. W celu sprawdzenia jakości aproksymacji należy
+     * każdorazowo skorzystać z poniższego zbioru testowego:
+     *
+     * approximation_test.txt
+     *
+     * Zarówno pliki zawierające zbiory treningowe, jak i plik zawierający dane testowe mają ten sam
+     * format - w każdej linii zawarte są wejście i odpowiadającej jej wyjście (oddzielone spacją).
+     * Jako ocenę jakości aproksymacji należy rozważyć błąd średniokwadratowy na zbiorze testowym.
      *
      * W sprawozdaniu należy zwrócić uwagę na następujące rzeczy:
      *
-     * Jak zmienia się błąd średniokwadratowy  po każdej epoce nauki na zbiorze treningowym? Jak
-     * wpływają parametry nauki (współczynnik nauki i momentum) na szybkość nauki? Jak wpływa
-     * obecność lub brak obecności biasu na proces nauki? Jak można interpretować wyjścia z warstwy
-     * ukrytej w tego rodzaju sieci?
+     * Jak zmienia się błąd średniokwadratowy po każdej epoce nauki na zbiorze treningowym i zbiorze
+     * testowym? Jaka liczba neuronów w warstwie ukrytej jest potrzebna, aby sieć dokonywała
+     * poprawnej aproksymacji? Kiedy można uznać, że sieć jest nauczona? Jak wpływają parametry
+     * nauki (współczynnik nauki i momentum) na szybkość nauki? Jak wyglądają wykresy funkcji
+     * aproksymowanej przez sieć w porównaniu z rozkładem punktów treningowych?
      */
     public static void generateRaports() {
         int hiddenNeurons;
         int epochs;
-        String outputFile = "_transformation";
+        String outputFile = "_approximation";
         double expectedError;
         //kazdy blok to przypadek testowy ktory wygeneruje raport
         //raport sklada sie z pliku png z wykresem bledu sredniokwadratowego i opisem parametrow
@@ -45,7 +62,7 @@ public class TransformationProcedures {
         ConnectedNeuron.MOMENTUM = 0.9d;
         ConnectedNeuron.BIAS_ENABLED = false;
         epochs = 500;
-        TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 1;
         outputFile = outputFile.replace('1', '2');
@@ -54,7 +71,7 @@ public class TransformationProcedures {
         ConnectedNeuron.MOMENTUM = 0.9d;
         ConnectedNeuron.BIAS_ENABLED = true;
         epochs = 500;
-        TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 1;
         outputFile = outputFile.replace('2', '3');
@@ -64,7 +81,7 @@ public class TransformationProcedures {
         ConnectedNeuron.BIAS_ENABLED = true;
         //epochs = 500;
         expectedError = 0.01;
-        TransformationProcedures.performTransformation(expectedError, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile);
 
 
         hiddenNeurons = 2;
@@ -74,7 +91,7 @@ public class TransformationProcedures {
         ConnectedNeuron.MOMENTUM = 0.9d;
         ConnectedNeuron.BIAS_ENABLED = false;
         epochs = 500;
-        TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 2;
         outputFile = outputFile.replace('4', '5');
@@ -83,7 +100,7 @@ public class TransformationProcedures {
         ConnectedNeuron.MOMENTUM = 0.9d;
         ConnectedNeuron.BIAS_ENABLED = true;
         epochs = 500;
-        TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 2;
         outputFile = outputFile.replace('5', '6');
@@ -93,7 +110,7 @@ public class TransformationProcedures {
         ConnectedNeuron.BIAS_ENABLED = true;
         //epochs = 500;
         expectedError = 0.01;
-        TransformationProcedures.performTransformation(expectedError, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile);
 
 
         hiddenNeurons = 3;
@@ -103,7 +120,7 @@ public class TransformationProcedures {
         ConnectedNeuron.MOMENTUM = 0.9d;
         ConnectedNeuron.BIAS_ENABLED = false;
         epochs = 500;
-        TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 3;
         outputFile = outputFile.replace('7', '8');
@@ -112,7 +129,7 @@ public class TransformationProcedures {
         ConnectedNeuron.MOMENTUM = 0.9d;
         ConnectedNeuron.BIAS_ENABLED = true;
         epochs = 500;
-        TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 3;
         outputFile = outputFile.replace('8', '9');
@@ -122,7 +139,7 @@ public class TransformationProcedures {
         ConnectedNeuron.BIAS_ENABLED = true;
         //epochs = 500;
         expectedError = 0.01;
-        TransformationProcedures.performTransformation(expectedError, hiddenNeurons, outputFile);
+        ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile);
     }
 
     /**
@@ -130,17 +147,18 @@ public class TransformationProcedures {
      * @param hiddenNeurons - number of neurons on hidden layer
      * @param outputFile    - reports will start with this file name
      */
-    public static void performTransformation(int epochs, int hiddenNeurons, String outputFile) {
-        String errorsFilePath = "_transformation_error.txt";
-        String plotFilePath = "_transformationPlot";
-        ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(4, 4, hiddenNeurons, 1);
-        double[][] learningSet = FileUtils.loadDataArrays("transformation.txt");
+    public static void performApproximation(int epochs, int hiddenNeurons, String outputFile) {
+        //TODO
+        String errorsFilePath = "_approximation_error.txt";
+        String plotFilePath = "_approximationPlot";
+        //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(4, 4, hiddenNeurons, 1);
+        //double[][] learningSet = FileUtils.loadDataArrays("transformation.txt");
 
         File f = new File(errorsFilePath);
         f.delete();
         double err = 0;
 
-        for (int i = 0; i < epochs; i++) {
+        /*for (int i = 0; i < epochs; i++) {
             //epoka nauki
             err = 0;
             double[][] mixedSet = Utils.shake(learningSet);
@@ -169,11 +187,11 @@ public class TransformationProcedures {
         } catch (IOException ex) {
             System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
         }
-
+*/
     }
 
     /**
-     * Method learns network until it reaches expeted error or 100000 epochs. May cause performance
+     * Method learns network until it reaches expected error or 100000 epochs. May cause performance
      * issues.
      *
      * @param expectedError - error you want to end with after learning, if it is impossible,
@@ -181,14 +199,14 @@ public class TransformationProcedures {
      * @param hiddenNeurons - number of neurons on hidden layer
      * @param outputFile    - reports will start with this file name
      */
-    public static void performTransformation(double expectedError, int hiddenNeurons, String outputFile) {
-
+    public static void performApproximation(double expectedError, int hiddenNeurons, String outputFile) {
+        //TODO
         int maxEpochs = 100000;
-        String errorsFilePath = "_transformation_error.txt";
-        String plotFilePath = "_transformationPlot";
-        ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(4, 4, hiddenNeurons, 1);
-        double[][] learningSet = FileUtils.loadDataArrays("transformation.txt");
-
+        String errorsFilePath = "_approximation_error.txt";
+        String plotFilePath = "_approximationPlot";
+        //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(4, 4, hiddenNeurons, 1);
+        //double[][] learningSet = FileUtils.loadDataArrays("transformation.txt");
+/*
         File f = new File(errorsFilePath);
         f.delete();
         double err = Double.MAX_VALUE;
@@ -227,6 +245,6 @@ public class TransformationProcedures {
         } catch (IOException ex) {
             System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
         }
+    }*/
     }
 }
-
