@@ -173,7 +173,7 @@ public class TransformationProcedures {
             Utils.runGnuplotScript(plotFilePath);
             System.out.println("Wygenerowano pliki raportu: " + outputFile);
         } catch (IOException ex) {
-            System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
+            System.out.println("Wystapil blad przy generowaniu raportu " + outputFile);
         }
 
     }
@@ -232,7 +232,7 @@ public class TransformationProcedures {
             Utils.runGnuplotScript(plotFilePath);
             System.out.println("Wygenerowano pliki raportu: " + outputFile);
         } catch (IOException ex) {
-            System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
+            System.out.println("Wystapil blad przy generowaniu raportu " + outputFile);
         }
     }
 }
