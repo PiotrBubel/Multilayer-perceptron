@@ -55,6 +55,9 @@ public class ApproximationProcedures {
         //przy dodawaniu przypadkow testowych trzeba zmieniac nazwe pliku, zeby nie nadpisalo poprzedniego reportu
         //mozna dodawac dowolnie duzo przypadkow testowych z rownymi danymi, dla kazdego wygenerowany zostanie raport
 
+        //TODO ze zbioru testowego wydzielic maly zbior walidacyjny, zeby sprawdzac czy nie dochodzi do
+        // TODO przeuczenia (tzn blad na zbiorze do nauki sie zmniejsza, ale zwieksza sie blad na zbiorze walidacyjnym)
+
         hiddenNeurons = 1;
         outputFile = outputFile + "1";
         ConnectedNeuron.BETA = 1.0d;
