@@ -1,8 +1,9 @@
 package com.mycompany.perceptron;
 
-import com.mycompany.perceptron.procedures.TransformationProcedures;
+import com.mycompany.perceptron.procedures.ApproximationProcedures;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
@@ -18,7 +19,8 @@ public class Main {
         //wykres: pionowa oś - wartość błędu, pozioma oś - kolejne epoki nauki
 
 
-        TransformationProcedures.generateRaports();
+        //TransformationProcedures.generateReports();
+        ApproximationProcedures.generateReports();
     }
 
     public static void perceptron() {
