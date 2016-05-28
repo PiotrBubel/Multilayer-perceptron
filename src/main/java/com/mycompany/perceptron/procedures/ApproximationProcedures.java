@@ -3,6 +3,7 @@ package com.mycompany.perceptron.procedures;
 import com.mycompany.perceptron.ConnectedNeuralNetwork;
 import com.mycompany.perceptron.ConnectedNeuron;
 import com.mycompany.perceptron.FileUtils;
+import com.mycompany.perceptron.NeuralNetworkApproximation;
 import com.mycompany.perceptron.Utils;
 
 import java.io.File;
@@ -66,15 +67,15 @@ public class ApproximationProcedures {
         //TODO ze zbioru testowego wydzielic maly zbior walidacyjny, zeby sprawdzac czy nie dochodzi do
         // TODO przeuczenia (tzn blad na zbiorze do nauki sie zmniejsza, ale zwieksza sie blad na zbiorze walidacyjnym)
 
-        hiddenNeurons = 10;
+        hiddenNeurons = 20;
         outputFile = outputFile + "1";
-        ConnectedNeuron.BETA = 0.1d;
-        ConnectedNeuron.STEP = 0.5d;
-        ConnectedNeuron.MOMENTUM = 0.5d;
+        ConnectedNeuron.BETA = 0.8d;
+        ConnectedNeuron.STEP = 0.2d;
+        ConnectedNeuron.MOMENTUM = 0.7d;
         ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 2000;
+        epochs = 75;
         ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile + "a", ApproximationProcedures.inputFile1);
-        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile + "b", ApproximationProcedures.inputFile2);
+        //ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile + "b", ApproximationProcedures.inputFile2);
 
 
     }
@@ -90,7 +91,7 @@ public class ApproximationProcedures {
         String errorsFilePathTestSet = "_approximation_test_error.txt";
 
         String plotFilePath = "_approximationPlot";
-        ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
+        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(1, 1, hiddenNeurons);//new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
         double[][] learningSet = FileUtils.loadDataArrays(inputFile);
         double[][] testingSet = FileUtils.loadDataArrays(testFile);
 
@@ -103,7 +104,7 @@ public class ApproximationProcedures {
         for (int i = 0; i < epochs; i++) {
             //epoka nauki
             err = 0;
-            double[][] mixedSet = learningSet;//Utils.shake(learningSet);
+            double[][] mixedSet = Utils.shake(learningSet);
             for (double[] data : mixedSet) {
                 network.learn(new double[]{data[0]}, new double[]{data[1]});
                 err = err + Utils.countError(network.output(new double[]{data[0]})[0], data[1]);
@@ -113,7 +114,7 @@ public class ApproximationProcedures {
 
             //liczenie bledu ze zbioru testowego
             err = 0;
-            mixedSet = testingSet;//Utils.shake(testingSet);
+            mixedSet = Utils.shake(testingSet);
             for (double[] data : mixedSet) {
                 err = err + Utils.countError(network.output(new double[]{data[0]})[0], data[1]);
             }
@@ -129,7 +130,8 @@ public class ApproximationProcedures {
 
         ApproximationProcedures.drawFunction(network, outputFile + "Functions", header);
 
-        //FileUtils.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, testingSet);
+
+        //network.print();
 
         //generowanie raportu z błędami wyliczonymi z danych testowych
         ApproximationProcedures.saveErrorPlotCommand(plotFilePath,

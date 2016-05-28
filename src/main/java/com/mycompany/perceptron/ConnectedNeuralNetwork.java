@@ -12,7 +12,7 @@ public class ConnectedNeuralNetwork {
     //przedział z którego losowane są wagi początkowe neuronów
     public static double MIN_FIRST_WAGE = -0.5d;
     public static double MAX_FIRST_WAGE = 0.5d;
-    private List<ConnectedNeuron[]> layers;
+    protected List<ConnectedNeuron[]> layers;
 
 
     public ConnectedNeuralNetwork(int inputNeurons, int outputNeurons, int hiddenNeurons, int hiddenLayers) {
@@ -55,7 +55,7 @@ public class ConnectedNeuralNetwork {
         return listToArray(outputsList);
     }
 
-    private void connectNeurons() {
+    protected void connectNeurons() {
         for (int i = 0; i < layers.size(); i++) {
             for (int j = 0; j < layers.get(i).length; j++) {
                 if (i == 0) {
@@ -70,7 +70,7 @@ public class ConnectedNeuralNetwork {
         }
     }
 
-    private double[] randWages(int length) {
+    protected double[] randWages(int length) {
         double[] wages = new double[length];
         Random r = new Random();
         for (int i = 0; i < length; i++) {
@@ -109,7 +109,7 @@ public class ConnectedNeuralNetwork {
     }
 
     //wsteczna propagacja błędu
-    private void learn(double[] expected) {
+    protected void learn(double[] expected) {
         //System.out.println("NAUKA--------------------------");
         for (int i = layers.size() - 1; i > 0; i--) {//przechodzimy warstwa po warstwie od outputu w dół
             for (int j = 0; j < layers.get(i).length; j++) {
@@ -144,11 +144,20 @@ public class ConnectedNeuralNetwork {
         return output(listToArray(x));
     }
 
-    private double[] listToArray(List<Double> x) {
+    protected double[] listToArray(List<Double> x) {
         double[] target = new double[x.size()];
         for (int i = 0; i < target.length; i++) {
             target[i] = x.get(i);
         }
         return target;
+    }
+
+    public void print() {
+        for (int i = 0; i < this.layers.size(); i++) {
+            for (ConnectedNeuron n : layers.get(i)) {
+                n.print();
+            }
+            System.out.println(" ------  END OF LAYER ------ ");
+        }
     }
 }
