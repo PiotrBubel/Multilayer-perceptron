@@ -22,7 +22,7 @@ public class Utils {
             errors[i] = errors[i] + (out[i] - exp[i]);
             agregatedErrors = agregatedErrors + countError(out[i], exp[i]);
         }
-        return agregatedErrors * (1 / out.length + 1);  //bo srednia z czterech liczb
+        return agregatedErrors / out.length;
     }
 
     public static double countError(double out, double exp) {

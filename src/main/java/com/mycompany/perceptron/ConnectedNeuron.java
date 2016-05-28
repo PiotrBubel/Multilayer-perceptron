@@ -102,7 +102,7 @@ public class ConnectedNeuron {
 
     public void changeWages() {
         double[] lastWClone = cloneArray(lastW);
-        lastW = cloneArray(w);  //sprawdzic czy clone dziala tak jak mysle
+        lastW = cloneArray(w);
         for (int i = 0; i < w.length; i++) {
             w[i] = w[i] + STEP * error * previousLayer[i].getLastOutput() + MOMENTUM * (w[i] - lastWClone[i]);
         }

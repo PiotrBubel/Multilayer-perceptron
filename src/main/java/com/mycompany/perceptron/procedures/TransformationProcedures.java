@@ -6,7 +6,10 @@ import com.mycompany.perceptron.FileUtils;
 import com.mycompany.perceptron.Utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 /**
@@ -31,7 +34,7 @@ public class TransformationProcedures {
      * obecność lub brak obecności biasu na proces nauki? Jak można interpretować wyjścia z warstwy
      * ukrytej w tego rodzaju sieci?
      */
-    public static void generateRaports() {
+    public static void generateReports() {
         int hiddenNeurons;
         int epochs;
         String outputFile = "_transformation";
@@ -43,22 +46,22 @@ public class TransformationProcedures {
         //przy dodawaniu przypadkow testowych trzeba zmieniac nazwe pliku, zeby nie nadpisalo poprzedniego reportu
         //mozna dodawac dowolnie duzo przypadkow testowych z rownymi danymi, dla kazdego wygenerowany zostanie raport
 
-        hiddenNeurons = 1;
+        hiddenNeurons = 2;
         outputFile = outputFile + "1";
         ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = false;
-        epochs = 500;
+        ConnectedNeuron.STEP = 0.2d;
+        ConnectedNeuron.MOMENTUM = 0.0d;
+        ConnectedNeuron.BIAS_ENABLED = true;
+        epochs = 10000;
         TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
 
-        hiddenNeurons = 1;
+        hiddenNeurons = 2;
         outputFile = outputFile.replace('1', '2');
         ConnectedNeuron.BETA = 1.0d;
-        ConnectedNeuron.STEP = 0.9d;
-        ConnectedNeuron.MOMENTUM = 0.9d;
-        ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 500;
+        ConnectedNeuron.STEP = 0.2d;
+        ConnectedNeuron.MOMENTUM = 0.0d;
+        ConnectedNeuron.BIAS_ENABLED = false;
+        epochs = 100000;
         TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
 
         hiddenNeurons = 1;
@@ -128,6 +131,7 @@ public class TransformationProcedures {
         //epochs = 500;
         expectedError = 0.01;
         TransformationProcedures.performTransformation(expectedError, hiddenNeurons, outputFile);
+
     }
 
     /**
@@ -163,8 +167,8 @@ public class TransformationProcedures {
                 "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
                 ",  " + hiddenNeurons + " neurony ukryte.";
 
-        FileUtils.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, learningSet);
-        FileUtils.saveSinglePlotCommand(plotFilePath,
+        TransformationProcedures.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, learningSet);
+        TransformationProcedures.saveSinglePlotCommand(plotFilePath,
                 outputFile + ".png",
                 errorsFilePath,
                 "Blad sredniokwadratowy. \\n" + header);
@@ -222,8 +226,8 @@ public class TransformationProcedures {
                 "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
                 ",  " + hiddenNeurons + " neurony ukryte.";
 
-        FileUtils.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, learningSet);
-        FileUtils.saveSinglePlotCommand(plotFilePath,
+        TransformationProcedures.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, learningSet);
+        TransformationProcedures.saveSinglePlotCommand(plotFilePath,
                 outputFile + ".png",
                 errorsFilePath,
                 "Blad sredniokwadratowy. \\n" + header);
@@ -233,6 +237,61 @@ public class TransformationProcedures {
             System.out.println("Wygenerowano pliki raportu: " + outputFile);
         } catch (IOException ex) {
             System.out.println("Wystapil blad przy generowaniu raportu " + outputFile);
+        }
+    }
+
+    public static void generateNetworkReport(String reportFilePath, String reportHeader, ConnectedNeuralNetwork network, double[][] testSet, double[][] expectedOutputs) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(reportFilePath))) {
+            DecimalFormat df = new DecimalFormat("0.0000");
+            out.println(reportHeader);
+            out.println();
+            for (int i = 0; i < expectedOutputs.length; i++) {
+
+                out.print("Network inputs \t\t");
+                for (double in : testSet[i]) {
+                    out.print(df.format(in) + ", \t");
+                }
+                out.println();
+                out.print("Network outputs \t");
+                double[] outputs = network.output(testSet[i]);
+                for (double outs : outputs) {
+                    out.print(df.format(outs) + ", \t");
+                }
+                out.println();
+                out.print("Expected outputs \t");
+                for (double outs : expectedOutputs[i]) {
+                    out.print(df.format(outs) + ", \t");
+                }
+
+                out.println();
+                out.print("Error \t");
+                double error = Utils.countError(outputs, expectedOutputs[i]);
+                out.print(error);
+
+                out.println();
+                out.print("Hidden layer outputs \t");
+                double[] hiddenOutputs = network.lastHiddenLayerOutput();
+                for (double outs : hiddenOutputs) {
+                    out.print(df.format(outs) + ", \t");
+                }
+                out.println();
+                out.println();
+            }
+            out.println();
+            out.println("--end of report--");
+
+        } catch (FileNotFoundException ex) {
+        }
+    }
+
+    public static void saveSinglePlotCommand(String plotFilePath, String outputFilePath, String pointsPath, String plotTitle) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
+            out.println("set terminal png size 800,600");
+            out.println("set output '" + outputFilePath + "'");
+            out.println("set title \"" + plotTitle + "\"");
+            out.println("plot \"" + pointsPath + "\" title \"Points\" as line");
+            out.println();
+        } catch (FileNotFoundException ex) {
         }
     }
 }
