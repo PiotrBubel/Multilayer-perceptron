@@ -1,4 +1,4 @@
-package com.mycompany.perceptron;
+package com.mycompany.perceptron.utils;
 
 import java.io.IOException;
 import java.text.DecimalFormat;

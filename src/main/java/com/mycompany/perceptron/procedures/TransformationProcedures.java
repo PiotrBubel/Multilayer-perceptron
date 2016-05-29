@@ -1,9 +1,10 @@
 package com.mycompany.perceptron.procedures;
 
-import com.mycompany.perceptron.ConnectedNeuralNetwork;
-import com.mycompany.perceptron.ConnectedNeuron;
-import com.mycompany.perceptron.FileUtils;
-import com.mycompany.perceptron.Utils;
+
+import com.mycompany.perceptron.network.ConnectedNeuralNetwork;
+import com.mycompany.perceptron.network.ConnectedNeuron;
+import com.mycompany.perceptron.utils.FileUtils;
+import com.mycompany.perceptron.utils.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

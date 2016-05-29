@@ -1,4 +1,4 @@
-package com.mycompany.perceptron;
+package com.mycompany.perceptron.network;
 
 import java.text.DecimalFormat;
 import java.util.Random;
@@ -33,9 +33,9 @@ public class ConnectedNeuron {
         this.nextLayer = null;
         this.indexInLayer = index;
         lastW = new double[w.length];
-        error = Double.NaN;
-        lastSum = Double.NaN;
-        lastOut = Double.NaN;
+        error = 0;//Double.NaN;
+        lastSum = 0;//Double.NaN;
+        lastOut = 0;//Double.NaN;
         if (BIAS_ENABLED) {
             Random r = new Random();
             biasWage = lastBiasWage =
@@ -90,7 +90,7 @@ public class ConnectedNeuron {
     public double outputWithoutSigmoid(double[] x) {
         lastSum = 0.0d;
         for (int i = 0; i < x.length; i++) {
-            lastSum = (x[i] * w[i]);
+            lastSum = lastSum + (x[i] * w[i]);
         }
         if (BIAS_ENABLED) {
             lastSum = lastSum + biasWage * 1;
@@ -113,9 +113,14 @@ public class ConnectedNeuron {
         error = sigmoidFunctionDerivative(lastSum) * (expectedOutput - lastOut);
     }
 
+    public void calculateNonSigmoidError(double expectedOutput) {
+        //wzór dla ostatniej warstwy
+        error = expectedOutput - lastOut;
+    }
+
     public void changeWages() {
         double[] lastWClone = cloneArray(lastW);
-        lastW = cloneArray(w);
+        lastW = cloneArray(w);  //sprawdzic czy clone dziala tak jak mysle
         for (int i = 0; i < w.length; i++) {
             w[i] = w[i] + STEP * error * previousLayer[i].getLastOutput() + MOMENTUM * (w[i] - lastWClone[i]);
         }
@@ -142,24 +147,24 @@ public class ConnectedNeuron {
     //pochodna sigmoidy
     private double sigmoidFunctionDerivative(double x) {
         double sig = sigmoidFunction(x);
-        return BETA * sig * (1d - sig); //wynika to z definicji pochodnej funkcji sigmoidalnej
+        return sig * (1d - sig); //wynika to z definicji pochodnej funkcji sigmoidalnej
     }
 
     public void print() {
         DecimalFormat df = new DecimalFormat("0.000");
-        for (double wage : w) {
-            System.out.print(df.format(wage) + "\t");
+        for (double weight : w) {
+            System.out.print(df.format(weight) + "\t");
         }
         System.out.println();
         if (this.previousLayer != null) {
             System.out.println("Previous layer neurons: " + this.previousLayer.length);
-        } else{
+        } else {
             System.out.println("No previous layer");
         }
 
         if (this.nextLayer != null) {
             System.out.println("Next layer neurons: " + this.nextLayer.length);
-        } else{
+        } else {
             System.out.println("No next layer");
         }
     }

@@ -1,10 +1,12 @@
 package com.mycompany.perceptron.procedures;
 
-import com.mycompany.perceptron.ConnectedNeuralNetwork;
-import com.mycompany.perceptron.ConnectedNeuron;
-import com.mycompany.perceptron.FileUtils;
-import com.mycompany.perceptron.NeuralNetworkApproximation;
-import com.mycompany.perceptron.Utils;
+
+
+import com.mycompany.perceptron.network.ConnectedNeuralNetwork;
+import com.mycompany.perceptron.network.ConnectedNeuron;
+import com.mycompany.perceptron.network.NeuralNetworkApproximation;
+import com.mycompany.perceptron.utils.FileUtils;
+import com.mycompany.perceptron.utils.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -69,17 +71,14 @@ public class ApproximationProcedures {
 
         hiddenNeurons = 20;
         outputFile = outputFile + "1";
-        ConnectedNeuron.BETA = 0.8d;
-        ConnectedNeuron.STEP = 0.2d;
-        ConnectedNeuron.MOMENTUM = 0.7d;
+        ConnectedNeuron.BETA = 1.0d;
+        ConnectedNeuron.STEP = 0.1d;
+        ConnectedNeuron.MOMENTUM = 0.2d;
         ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 75;
+        epochs = 4000;
         ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile + "a", ApproximationProcedures.inputFile1);
-        //ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile + "b", ApproximationProcedures.inputFile2);
-
-
+        ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile + "b", ApproximationProcedures.inputFile2);
     }
-
 
     /**
      * @param epochs        - number of epochs network will be train
@@ -91,7 +90,8 @@ public class ApproximationProcedures {
         String errorsFilePathTestSet = "_approximation_test_error.txt";
 
         String plotFilePath = "_approximationPlot";
-        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(1, 1, hiddenNeurons);//new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
+        //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
+        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(hiddenNeurons);
         double[][] learningSet = FileUtils.loadDataArrays(inputFile);
         double[][] testingSet = FileUtils.loadDataArrays(testFile);
 
@@ -114,13 +114,18 @@ public class ApproximationProcedures {
 
             //liczenie bledu ze zbioru testowego
             err = 0;
-            mixedSet = Utils.shake(testingSet);
+            mixedSet = testingSet;//Utils.shake(testingSet);
             for (double[] data : mixedSet) {
                 err = err + Utils.countError(network.output(new double[]{data[0]})[0], data[1]);
             }
             err = err / mixedSet.length;
             FileUtils.addPoint(errorsFilePathTestSet, new double[]{i, err});
+
+
+            System.out.println("epoka: " + i);
         }
+
+        network.print();
 
         DecimalFormat df = new DecimalFormat("0.00000");
         String header = "Epoki: " + epochs + ", ostatni blad: " + df.format(err) +
@@ -130,8 +135,7 @@ public class ApproximationProcedures {
 
         ApproximationProcedures.drawFunction(network, outputFile + "Functions", header);
 
-
-        //network.print();
+        //FileUtils.generateNetworkReport(outputFile + "_report.txt", header, network, learningSet, testingSet);
 
         //generowanie raportu z błędami wyliczonymi z danych testowych
         ApproximationProcedures.saveErrorPlotCommand(plotFilePath,
@@ -234,7 +238,10 @@ public class ApproximationProcedures {
             out.println("set title \"" + plotTitle + "\"");
             //out.println("set style data lines");
             out.println("plot \"" + networkPointsPath + "\" title \"Outputs\", \\");
-            out.print("\"" + ApproximationProcedures.testFile + "\" title \"Test\"");
+            out.print("\"" + ApproximationProcedures.testFile + "\" title \"Test\", \\");
+            //out.print("\"" + ApproximationProcedures.inputFile1 + "\" title \"Learning1\"", \\");
+            //out.print("\"" + ApproximationProcedures.inputFile2 + "\" title \"Learning2\"");
+
             out.println();
             out.close();
         } catch (FileNotFoundException ex) {
