@@ -1,5 +1,6 @@
 package com.mycompany.perceptron;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 /**
@@ -86,6 +87,18 @@ public class ConnectedNeuron {
         return lastOut;
     }
 
+    public double outputWithoutSigmoid(double[] x) {
+        lastSum = 0.0d;
+        for (int i = 0; i < x.length; i++) {
+            lastSum = (x[i] * w[i]);
+        }
+        if (BIAS_ENABLED) {
+            lastSum = lastSum + biasWage * 1;
+        }
+        lastOut = lastSum;
+        return lastOut;
+    }
+
     //expectedOutput wykorzystywane jest tylko wtedy kiedy jest to warstwa ostatnia, w innych jest pomijane
     public void calculateError() {
         double errorSum = 0.0d;
@@ -129,6 +142,25 @@ public class ConnectedNeuron {
     //pochodna sigmoidy
     private double sigmoidFunctionDerivative(double x) {
         double sig = sigmoidFunction(x);
-        return sig * (1d - sig); //wynika to z definicji pochodnej funkcji sigmoidalnej
+        return BETA * sig * (1d - sig); //wynika to z definicji pochodnej funkcji sigmoidalnej
+    }
+
+    public void print() {
+        DecimalFormat df = new DecimalFormat("0.000");
+        for (double wage : w) {
+            System.out.print(df.format(wage) + "\t");
+        }
+        System.out.println();
+        if (this.previousLayer != null) {
+            System.out.println("Previous layer neurons: " + this.previousLayer.length);
+        } else{
+            System.out.println("No previous layer");
+        }
+
+        if (this.nextLayer != null) {
+            System.out.println("Next layer neurons: " + this.nextLayer.length);
+        } else{
+            System.out.println("No next layer");
+        }
     }
 }
