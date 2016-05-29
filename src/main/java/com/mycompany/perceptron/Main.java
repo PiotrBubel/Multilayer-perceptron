@@ -1,6 +1,10 @@
 package com.mycompany.perceptron;
 
+import com.mycompany.perceptron.network.ConnectedNeuralNetwork;
+import com.mycompany.perceptron.network.ConnectedNeuron;
 import com.mycompany.perceptron.procedures.ApproximationProcedures;
+import com.mycompany.perceptron.procedures.TransformationProcedures;
+import com.mycompany.perceptron.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

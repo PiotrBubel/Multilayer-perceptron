@@ -1,4 +1,4 @@
-package com.mycompany.perceptron;
+package com.mycompany.perceptron.utils;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
