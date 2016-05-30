@@ -3,7 +3,6 @@ package com.mycompany.perceptron;
 import com.mycompany.perceptron.network.ConnectedNeuralNetwork;
 import com.mycompany.perceptron.network.ConnectedNeuron;
 import com.mycompany.perceptron.procedures.ApproximationProcedures;
-import com.mycompany.perceptron.procedures.TransformationProcedures;
 import com.mycompany.perceptron.utils.Utils;
 
 import java.util.ArrayList;
@@ -116,41 +115,6 @@ public class Main {
         }
     }
 
-    /**
-     * Klasyfikacja (maksymalna ocena 5)
-     *
-     * Stworzyć sieć neuronową (MPL) o 1, 2, 3 oraz 4 wejściach i 3 wyjściach. Sieć powinna posiadać
-     * od 1 do 20 neuronów w jednej warstwie ukrytej. Wszystkie neurony powinny posiadać sigmoidalną
-     * funkcję aktywacji. Należy nauczyć sieci z wykorzystaniem poniższych danych:
-     *
-     * classification_train.txt
-     *
-     * gdzie w każdej linicje opisany jest jeden obiekt (pierwsze 4 liczby oznaczają cechy tego
-     * obiektu) ostatnia liczba oznacza rodzaj obiektu (oddzielone spacją). Za wyjście sieci należy
-     * uznać odpowiednio zakodowany rodzaj obiektu: 1 - (1,0,0), 2 - (0,1,0), 3 - (0,0,1). Na
-     * wejście sieci należy podawać wybrane cechy obiektu w zależoności od liczby wejść (należy
-     * rozważyć 4 sieci z 1 wejściem, 6 sieci z 2 wejściami, 4 sieci z 3 wejściami i 1 sieć z 4
-     * wejściami). Należy przetestować sieci z biasem. Nauczona sieć powinna klasyfikować obiekty
-     * (określać prawidłowo ich rodzaj), których nie widziała podczas nauki. W celu sprawdzenia
-     * jakości nauczonej sieci należy skorzystać z następujących danych testowych:
-     *
-     * classification_test.txt
-     *
-     * Format tego pliku jest identyczny z formatem pliku z danymi treningowymi. Jako ocenę jakości
-     * należy rozważyć procent poprawnie sklasyfikowanych obiektów (odpowiednio odkodowany rodzaj
-     * obiektu) ze zbioru testowego.
-     *
-     * W sprawozdaniu należy zwrócić uwagę na następujące rzeczy:
-     *
-     * Jak zmienia się błąd średniokwadratowy oraz procent poprawnie sklasyfikowanych obiektów po
-     * każdej epoce nauki na zbiorze treningowym i zbiorze testowym? Jaka liczba neuronów w warstwie
-     * ukrytej jest potrzebna, aby sieć dokonywała poprawnej klasyfikiacji? Kiedy można uznać, że
-     * sieć jest nauczona? Jak wpływają parametry nauki (współczynnik nauki i momentum) na szybkość
-     * nauki? Jak wpływa wybór liczby i rodzaju cech obiektów na możlwości nauki sieci?
-     */
-    public static void classification() {
-
-    }
 }
 
 //PROJEKT
