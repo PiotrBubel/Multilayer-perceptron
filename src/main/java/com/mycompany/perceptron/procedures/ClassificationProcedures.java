@@ -1,62 +1,53 @@
 package com.mycompany.perceptron.procedures;
 
 
-import com.mycompany.perceptron.network.ConnectedNeuralNetwork;
 import com.mycompany.perceptron.network.ConnectedNeuron;
-import com.mycompany.perceptron.network.NeuralNetworkApproximation;
-import com.mycompany.perceptron.utils.FileUtils;
-import com.mycompany.perceptron.utils.Utils;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.text.DecimalFormat;
 
 /**
  * Created by Piotrek on 02.05.2016.
  */
-public class ApproximationProcedures {
+public class ClassificationProcedures {
 
     /**
-     * Aproksymacja (maksymalna ocena 4)
+     * Klasyfikacja (maksymalna ocena 5)
      *
-     * Stworzyć sieć neuronową (MLP) z jednym wejściem i jednym wyjściem. Sieć powinna mieć jedną
-     * warstwę ukrytą z neuronami o sigmoidalnej funkcji aktywacji oraz warstwę wyjściową z neuronem
-     * z identycznościową funkcją aktywacji (neuron liniowy). Korzystając z poniższych danych
-     * treningowych (wszystkie eksperymenty należy przeprowadzić dla obu zbiorów):
+     * Stworzyć sieć neuronową (MPL) o 1, 2, 3 oraz 4 wejściach i 3 wyjściach. Sieć powinna posiadać
+     * od 1 do 20 neuronów w jednej warstwie ukrytej. Wszystkie neurony powinny posiadać sigmoidalną
+     * funkcję aktywacji. Należy nauczyć sieci z wykorzystaniem poniższych danych:
      *
-     * approximation_train_1.txt approximation_train_2.txt
+     * classification_train.txt
      *
-     * należy nauczyć sieci dla liczby neuronów w wartwie ukrytej od 1 do 20. Należy przetestować
-     * sieci z biasem. Nauczona sieć powinna aproksymować funkcję (przybliżać jej wartości) dla
-     * danych, które nie były w zbiorze treningowym. W celu sprawdzenia jakości aproksymacji należy
-     * każdorazowo skorzystać z poniższego zbioru testowego:
+     * gdzie w każdej linicje opisany jest jeden obiekt (pierwsze 4 liczby oznaczają cechy tego
+     * obiektu) ostatnia liczba oznacza rodzaj obiektu (oddzielone spacją). Za wyjście sieci należy
+     * uznać odpowiednio zakodowany rodzaj obiektu: 1 - (1,0,0), 2 - (0,1,0), 3 - (0,0,1). Na
+     * wejście sieci należy podawać wybrane cechy obiektu w zależoności od liczby wejść (należy
+     * rozważyć 4 sieci z 1 wejściem, 6 sieci z 2 wejściami, 4 sieci z 3 wejściami i 1 sieć z 4
+     * wejściami). Należy przetestować sieci z biasem. Nauczona sieć powinna klasyfikować obiekty
+     * (określać prawidłowo ich rodzaj), których nie widziała podczas nauki. W celu sprawdzenia
+     * jakości nauczonej sieci należy skorzystać z następujących danych testowych:
      *
-     * approximation_test.txt
+     * classification_test.txt
      *
-     * Zarówno pliki zawierające zbiory treningowe, jak i plik zawierający dane testowe mają ten sam
-     * format - w każdej linii zawarte są wejście i odpowiadającej jej wyjście (oddzielone spacją).
-     * Jako ocenę jakości aproksymacji należy rozważyć błąd średniokwadratowy na zbiorze testowym.
+     * Format tego pliku jest identyczny z formatem pliku z danymi treningowymi. Jako ocenę jakości
+     * należy rozważyć procent poprawnie sklasyfikowanych obiektów (odpowiednio odkodowany rodzaj
+     * obiektu) ze zbioru testowego.
      *
      * W sprawozdaniu należy zwrócić uwagę na następujące rzeczy:
      *
-     * Jak zmienia się błąd średniokwadratowy po każdej epoce nauki na zbiorze treningowym i zbiorze
-     * testowym? Jaka liczba neuronów w warstwie ukrytej jest potrzebna, aby sieć dokonywała
-     * poprawnej aproksymacji? Kiedy można uznać, że sieć jest nauczona? Jak wpływają parametry
-     * nauki (współczynnik nauki i momentum) na szybkość nauki? Jak wyglądają wykresy funkcji
-     * aproksymowanej przez sieć w porównaniu z rozkładem punktów treningowych?
+     * Jak zmienia się błąd średniokwadratowy oraz procent poprawnie sklasyfikowanych obiektów po
+     * każdej epoce nauki na zbiorze treningowym i zbiorze testowym? Jaka liczba neuronów w warstwie
+     * ukrytej jest potrzebna, aby sieć dokonywała poprawnej klasyfikiacji? Kiedy można uznać, że
+     * sieć jest nauczona? Jak wpływają parametry nauki (współczynnik nauki i momentum) na szybkość
+     * nauki? Jak wpływa wybór liczby i rodzaju cech obiektów na możlwości nauki sieci?
      */
 
-    public static String inputFile1 = "approximation_train_1.txt";
-    public static String inputFile2 = "approximation_train_2.txt";
-    public static String testFile = "approximation_test.txt";
+    public static String inputFile = "classification_train.txt";
+    public static String testFile = "classification_test.txt";
 
     public static void generateReports() {
         int hiddenNeurons;
         int epochs;
-        String outputFile = "_approximation";
+        String outputFile = "_classification";
         double expectedError;
 
         ConnectedNeuron.BETA = 1.0d;
@@ -68,16 +59,16 @@ public class ApproximationProcedures {
         //mozna sprawdzic co sie dzieje z innymi parametrami powyzej
         for (hiddenNeurons = 1; hiddenNeurons <= 20; hiddenNeurons++) {
             String outputFile1 = outputFile + hiddenNeurons + "epochs";
-            ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile1 + "a", true);
-            ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile1 + "b", false);
+            ClassificationProcedures.performClassification(epochs, hiddenNeurons, outputFile1 + "a");
+            ClassificationProcedures.performClassification(epochs, hiddenNeurons, outputFile1 + "b");
         }
 
         //tylko jeden przypadek, mozna dodac inne
         hiddenNeurons = 15;
         String outputFile1 = outputFile + hiddenNeurons + "error";
         expectedError = 0.1d;
-        ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile1 + "a", true);
-        ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile1 + "b", false);
+        ClassificationProcedures.performClassification(expectedError, hiddenNeurons, outputFile1 + "a");
+        ClassificationProcedures.performClassification(expectedError, hiddenNeurons, outputFile1 + "b");
     }
 
     /**
@@ -85,11 +76,12 @@ public class ApproximationProcedures {
      * @param hiddenNeurons - number of neurons on hidden layer
      * @param outputFile    - reports will start with this file name
      */
-    public static void performApproximation(int epochs, int hiddenNeurons, String outputFile, boolean learningSet1) {
-        String errorsFilePathLearnSet = "_approximation_learn_error.txt";
-        String errorsFilePathTestSet = "_approximation_test_error.txt";
+    public static void performClassification(int epochs, int hiddenNeurons, String outputFile) {
+        String errorsFilePathLearnSet = "_classification_learn_error.txt";
+        String errorsFilePathTestSet = "_classification_test_error.txt";
 
-        String plotFilePath = "_approximationPlot";
+        String plotFilePath = "_classificationPlot";
+        /*
         //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
         ConnectedNeuralNetwork network = new NeuralNetworkApproximation(hiddenNeurons);
         double[][] learningSet;
@@ -163,6 +155,7 @@ public class ApproximationProcedures {
         f.delete();
         f = new File(outputFile + "FunctionsTmp.txt");
         f.delete();
+        */
     }
 
     /**
@@ -174,13 +167,15 @@ public class ApproximationProcedures {
      * @param hiddenNeurons - number of neurons on hidden layer
      * @param outputFile    - reports will start with this file name
      */
-    public static void performApproximation(double expectedError, int hiddenNeurons, String outputFile, boolean learningSet1) {
+    public static void performClassification(double expectedError, int hiddenNeurons, String outputFile) {
+
         int maxEpochs = 10000;
         int epochs = 0;
-        String errorsFilePathLearnSet = "_approximation_learn_error.txt";
-        String errorsFilePathTestSet = "_approximation_test_error.txt";
+        String errorsFilePathLearnSet = "_classification_learn_error.txt";
+        String errorsFilePathTestSet = "_classification_test_error.txt";
 
-        String plotFilePath = "_approximationPlot";
+        String plotFilePath = "_classificationPlot";
+        /*
         //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
         ConnectedNeuralNetwork network = new NeuralNetworkApproximation(hiddenNeurons);
         double[][] learningSet;
@@ -258,60 +253,7 @@ public class ApproximationProcedures {
         f.delete();
         f = new File(outputFile + "FunctionsTmp.txt");
         f.delete();
+        */
     }
 
-    private static void drawFunction(ConnectedNeuralNetwork network, String fileName, String header, boolean learningSet1) {
-        double[][] data = new double[160][2];
-        int i = 0;
-        double x = -4.0;
-        while (i < 160) {
-            data[i][0] = x;
-            data[i][1] = network.output(new double[]{x})[0];
-            i++;
-            x = x + 0.05d;
-        }
-        FileUtils.saveArray(fileName + "Tmp.txt", data);
-        ApproximationProcedures.saveFunctionsPlotCommand(fileName + "Plot", fileName + ".png", fileName + "Tmp.txt", "Dane testowe i wyjscia z sieci. " + header, learningSet1);
-        try {
-            Utils.runGnuplotScript(fileName + "Plot");
-        } catch (Exception e) {
-
-        }
-    }
-
-    private static void saveFunctionsPlotCommand(String plotFilePath, String outputFilePath, String networkPointsPath, String plotTitle, boolean learningSet1) {
-        try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
-            out.println("set terminal png size 800,600");
-            out.println("set output '" + outputFilePath + "'");
-            out.println("set title \"" + plotTitle + "\"");
-            //out.println("set style data lines");
-            out.println("plot \"" + networkPointsPath + "\" title \"Outputs\", \\");
-            out.println("\"" + ApproximationProcedures.testFile + "\" title \"Test\", \\");
-            if (learningSet1) {
-                out.println("\"" + ApproximationProcedures.inputFile1 + "\" title \"LearningSet1\", \\");
-            } else {
-                out.println("\"" + ApproximationProcedures.inputFile2 + "\" title \"LearningSet2\"");
-            }
-
-            out.println();
-            out.close();
-        } catch (FileNotFoundException ex) {
-        }
-
-    }
-
-    private static void saveErrorPlotCommand(String plotFilePath, String outputFilePath, String pointsPathL, String pointsPathT, String plotTitle) {
-        try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
-            out.println("set terminal png size 800,600");
-            //out.println("set xrange [-0.5:12.5]");
-            //out.println("set yrange [-0.5:12.5]");
-            out.println("set output '" + outputFilePath + "'");
-            out.println("set title \"" + plotTitle + "\"");
-            out.println("set style data lines");
-            out.println("plot \"" + pointsPathT + "\" title \"Testing set\", \\");
-            out.println("\"" + pointsPathL + "\" title \"Learning set\"");
-            out.println();
-        } catch (FileNotFoundException ex) {
-        }
-    }
 }
