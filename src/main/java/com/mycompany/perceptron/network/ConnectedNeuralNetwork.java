@@ -14,9 +14,6 @@ public class ConnectedNeuralNetwork {
     public static double MAX_FIRST_WAGE = 0.5d;
     protected List<ConnectedNeuron[]> layers;
 
-    public ConnectedNeuralNetwork() {
-
-    }
 
     public ConnectedNeuralNetwork(int inputNeurons, int outputNeurons, int hiddenNeurons, int hiddenLayers) {
 
@@ -85,22 +82,10 @@ public class ConnectedNeuralNetwork {
     public double[] output(double[] x) {
 
         List<Double> outputsList = new ArrayList<>();
-        //double[] outputsArray = new double[x.length];
-        for (int i = 0; i < x.length; i++) {
+        for (int i = 0; i < layers.get(0).length; i++) {
             outputsList.add(i, layers.get(0)[i].outputWithoutSigmoid(x[i]));
         }
 
-/*
-        List<Double> outputsList2 = new ArrayList<>();
-        for (int i = 0; i < layers.get(1).length; i++) {
-            outputsList2.add(layers.get(1)[i].output(listToArray(outputsList)));
-        }
-        List<Double> outputsList3 = new ArrayList<>();
-        for (int i = 0; i < layers.get(2).length; i++) {
-            outputsList3.add(layers.get(2)[i].output(listToArray(outputsList2)));
-        }
-        return listToArray(outputsList3);
-*/
         List<Double> secondList = new ArrayList<>();
         for (int l = 1; l < layers.size(); l++) {
             for (int n = 0; n < layers.get(l).length; n++) {
