@@ -32,12 +32,6 @@ public class FileUtils {
         }
     }
 
-    //public static void saveOutput(String filePath, List<double[]> data) {
-    //    int sizeX = data.size();
-    //    int sizeY = data.get(0).length;
-    //    FileUtils.saveOutput(filePath, data.toArray(new double[sizeX][sizeY]));
-    //}
-
     public static void saveList(String filePath, List<List<Double>> data) {
         try (PrintStream out = new PrintStream(new FileOutputStream(filePath))) {
             DecimalFormat df = new DecimalFormat("0.000");
@@ -62,7 +56,6 @@ public class FileUtils {
                 String[] values = line.split(" ");
                 listOfLists.add(new ArrayList<Double>());
                 for (String v : values) {
-                    //System.out.println(v);
                     listOfLists.get(l).add(Double.parseDouble(v.replaceAll(",", ".")));
                 }
                 l++;
