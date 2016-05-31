@@ -336,22 +336,12 @@ public class ClassificationProcedures {
             out.println("set terminal png size 800,600");
             out.println("set output '" + outputFilePath + "'");
             out.println("set title \"" + plotTitle + "\"");
+            out.println("set key outside");
             if (lines) {
                 out.println("set style data lines");
             }
             out.println("plot \"" + pointsPathT + "\" title \"Testing set\", \\");
             out.println("\"" + pointsPathL + "\" title \"Learning set\"");
-            out.println();
-        } catch (FileNotFoundException ex) {
-        }
-    }
-
-    public static void saveSinglePlotCommand(String plotFilePath, String outputFilePath, String pointsPath, String plotTitle) {
-        try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
-            out.println("set terminal png size 800,600");
-            out.println("set output '" + outputFilePath + "'");
-            out.println("set title \"" + plotTitle + "\"");
-            out.println("plot \"" + pointsPath + "\" title \"Points\" as line");
             out.println();
         } catch (FileNotFoundException ex) {
         }
