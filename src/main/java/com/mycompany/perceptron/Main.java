@@ -8,8 +8,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TransformationProcedures.generateReports();
-        ApproximationProcedures.generateReports();
-        ClassificationProcedures.generateReports();
+        //TransformationProcedures.generateReports();
+        //ApproximationProcedures.generateReports();
+        //ClassificationProcedures.generateReports();
     }
 }

@@ -67,6 +67,7 @@ public class ClassificationProcedures {
         ConnectedNeuron.MOMENTUM = 0.2d;
         ConnectedNeuron.BIAS_ENABLED = true;
         epochs = 3000;
+
         //dla powyzszych danych liczy i rysuje wykresy dla sieci z neuronami od 1 do 20
         //mozna sprawdzic co sie dzieje z innymi parametrami powyzej
         for (hiddenNeurons = 1; hiddenNeurons <= 20; hiddenNeurons++) {
@@ -76,6 +77,11 @@ public class ClassificationProcedures {
                 ClassificationProcedures.performClassification(epochs, hiddenNeurons, inputNeurons, outputFile1);
             }
         }
+
+        //to tylko przyklad wykorzystania, mozna zrobic wiele przypadkow
+        expectedError = 0.1;
+        hiddenNeurons = 10;
+        ClassificationProcedures.performClassification(expectedError, hiddenNeurons, 4, outputFile);
     }
 
     /**
@@ -242,77 +248,99 @@ public class ClassificationProcedures {
      * @param hiddenNeurons - number of neurons on hidden layer
      * @param outputFile    - reports will start with this file name
      */
-    public static void performClassification(double expectedError, int hiddenNeurons, String outputFile) {
-
-        int maxEpochs = 10000;
-        int epochs = 0;
+    public static void performClassification(double expectedError, int hiddenNeurons, int inputNeurons, String outputFile) {
         String errorsFilePathLearnSet = "_classification_learn_error.txt";
         String errorsFilePathTestSet = "_classification_test_error.txt";
+        String percentOfCorrectFilePathLearnSet = "_classification_percent_of_correct.txt";
+        String percentOfCorrectFilePathTestSet = "_classification_percent_of_correct.txt";
 
         String plotFilePath = "_classificationPlot";
-        /*
-        //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
-        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(hiddenNeurons);
-        double[][] learningSet;
-        if (learningSet1) {
-            learningSet = FileUtils.loadDataArrays(ApproximationProcedures.inputFile1);
-        } else {
-            learningSet = FileUtils.loadDataArrays(ApproximationProcedures.inputFile2);
-        }
 
+        ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(inputNeurons, 3, hiddenNeurons, 1);
+
+        double[][] learningSet = FileUtils.loadDataArrays(inputFile);
         double[][] testingSet = FileUtils.loadDataArrays(testFile);
 
         File f = new File(errorsFilePathLearnSet);
         f.delete();
-        File f2 = new File(errorsFilePathTestSet);
-        f2.delete();
+        f = new File(errorsFilePathTestSet);
+        f.delete();
+        f = new File(percentOfCorrectFilePathLearnSet);
+        f.delete();
+        f = new File(percentOfCorrectFilePathTestSet);
+        f.delete();
         double err = Double.MAX_VALUE;
+        double percent = 0;
+        double correct = 0d;
+        int epochs = 0;
+        int maxEpochs = 10000;
 
         while (err >= expectedError && epochs < maxEpochs) {
-            //epoka nauki
+            err = 0;
+            correct = 0d;
             double[][] mixedSet = Utils.shake(learningSet);
-            err = 0d;
             for (double[] data : mixedSet) {
-                network.learn(new double[]{data[0]}, new double[]{data[1]});
-                err = err + Utils.countError(network.output(new double[]{data[0]})[0], data[1]);
+                double[] expectedResult = ClassificationProcedures.interpretInput(data[4]);
+                network.learn(new double[]{data[0], data[1], data[2], data[3]}, expectedResult);
+                double output = ClassificationProcedures.interpretOutput(network.output(new double[]{data[0], data[1], data[2], data[3]}));
+
+                err = err + Utils.countError(output, data[4]);
+                if (output == data[4]) {
+                    correct++;
+                }
             }
+            percent = correct / (double) mixedSet.length * 100d;
+            FileUtils.addPoint(percentOfCorrectFilePathLearnSet, new double[]{epochs, percent});
+
             err = err / mixedSet.length;
             FileUtils.addPoint(errorsFilePathLearnSet, new double[]{epochs, err});
 
             //liczenie bledu ze zbioru testowego
-            err = 0d;
+            err = 0;
+            correct = 0d;
             mixedSet = testingSet;//Utils.shake(testingSet);
             for (double[] data : mixedSet) {
-                err = err + Utils.countError(network.output(new double[]{data[0]})[0], data[1]);
+                double output = ClassificationProcedures.interpretOutput(network.output(new double[]{data[0], data[1], data[2], data[3]}));
+
+                err = err + Utils.countError(output, data[4]);
+                if (output == data[4]) {
+                    correct++;
+                }
             }
             err = err / mixedSet.length;
             FileUtils.addPoint(errorsFilePathTestSet, new double[]{epochs, err});
+            percent = correct / (double) mixedSet.length * 100d;
+            FileUtils.addPoint(percentOfCorrectFilePathTestSet, new double[]{epochs, percent});
             epochs++;
-
-            if (epochs % 1000 == 0) {
-                System.out.println("Siec przeszla " + epochs + " epok nauki");
-            }
         }
 
+        //network.print();
+
         DecimalFormat df = new DecimalFormat("0.00000");
-        String header = "Oczekiwany blad: " + expectedError + ", ostatni blad: " + df.format(err * 0.25) +
-                ", epoki: " + epochs + ", \\n step: " + ConnectedNeuron.STEP + ", " +
+        String header = "Epoki: " + epochs + ", ostatni blad: " + df.format(err) +
+                ",\\n step: " + ConnectedNeuron.STEP + ", " +
                 "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
-                ",  " + hiddenNeurons + " neurony ukryte.";
+                ",  " + hiddenNeurons + " neurony ukryte, " + inputNeurons + "podane wejscia";
 
-
-        ApproximationProcedures.drawFunction(network, outputFile + "Functions", header, learningSet1);
+        //ApproximationProcedures.drawFunction(network, outputFile + "Functions", header);
 
 
         //generowanie raportu z błędami wyliczonymi z danych testowych
-        ApproximationProcedures.saveErrorPlotCommand(plotFilePath,
+        ClassificationProcedures.saveErrorPlotCommand(plotFilePath,
                 outputFile + "TLError.png",
                 errorsFilePathLearnSet,
                 errorsFilePathTestSet,
-                "Blad sredniokwadratowy. \\n" + header);
+                "Blad sredniokwadratowy. \\n" + header, true);
+
+        ClassificationProcedures.saveErrorPlotCommand(plotFilePath + "percent",
+                outputFile + "Percent.png",
+                percentOfCorrectFilePathLearnSet,
+                percentOfCorrectFilePathTestSet,
+                "Procent poprawnych odpowiedzi sieci. \\n" + header, false);
 
         try {
             Utils.runGnuplotScript(plotFilePath);
+            Utils.runGnuplotScript(plotFilePath + "percent");
             System.out.println("Wygenerowano pliki raportu: " + outputFile);
         } catch (IOException ex) {
             System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
@@ -328,7 +356,13 @@ public class ClassificationProcedures {
         f.delete();
         f = new File(outputFile + "FunctionsTmp.txt");
         f.delete();
-        */
+        f = new File(plotFilePath + "percent");
+        f.delete();
+        f = new File(percentOfCorrectFilePathLearnSet);
+        f.delete();
+        f = new File(percentOfCorrectFilePathTestSet);
+        f.delete();
+
     }
 
     private static void saveErrorPlotCommand(String plotFilePath, String outputFilePath, String pointsPathL, String pointsPathT, String plotTitle, boolean lines) {
