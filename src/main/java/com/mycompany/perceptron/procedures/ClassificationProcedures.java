@@ -333,7 +333,7 @@ public class ClassificationProcedures {
 
     private static void saveErrorPlotCommand(String plotFilePath, String outputFilePath, String pointsPathL, String pointsPathT, String plotTitle, boolean lines) {
         try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
-            out.println("set terminal png size 800,600");
+            out.println("set terminal png size 1000,600");
             out.println("set output '" + outputFilePath + "'");
             out.println("set title \"" + plotTitle + "\"");
             out.println("set key outside");

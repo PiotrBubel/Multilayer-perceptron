@@ -181,6 +181,11 @@ public class TransformationProcedures {
             System.out.println("Wystapil blad przy generowaniu raportu " + outputFile);
         }
 
+        f = new File(errorsFilePath);
+        f.delete();
+        f = new File(plotFilePath);
+        f.delete();
+
     }
 
     /**
@@ -239,6 +244,11 @@ public class TransformationProcedures {
         } catch (IOException ex) {
             System.out.println("Wystapil blad przy generowaniu raportu " + outputFile);
         }
+
+        f = new File(errorsFilePath);
+        f.delete();
+        f = new File(plotFilePath);
+        f.delete();
     }
 
     public static void generateNetworkReport(String reportFilePath, String reportHeader, ConnectedNeuralNetwork network, double[][] testSet, double[][] expectedOutputs) {
