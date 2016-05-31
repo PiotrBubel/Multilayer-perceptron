@@ -3,6 +3,7 @@ package com.mycompany.perceptron;
 import com.mycompany.perceptron.network.ConnectedNeuralNetwork;
 import com.mycompany.perceptron.network.ConnectedNeuron;
 import com.mycompany.perceptron.procedures.ApproximationProcedures;
+import com.mycompany.perceptron.procedures.ClassificationProcedures;
 import com.mycompany.perceptron.utils.Utils;
 
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public class Main {
 
 
         //TransformationProcedures.generateReports();
-        ApproximationProcedures.generateReports();
+        //ApproximationProcedures.generateReports();
+        ClassificationProcedures.generateReports();
     }
 
     public static void perceptron() {
