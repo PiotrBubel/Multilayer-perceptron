@@ -14,9 +14,7 @@ public class ConnectedNeuralNetwork {
     public static double MAX_FIRST_WAGE = 0.5d;
     protected List<ConnectedNeuron[]> layers;
 
-
     public ConnectedNeuralNetwork(int inputNeurons, int outputNeurons, int hiddenNeurons, int hiddenLayers) {
-
         //tworzenie warstw
         layers = new ArrayList<>();
         layers.add(0, new ConnectedNeuron[inputNeurons]);
