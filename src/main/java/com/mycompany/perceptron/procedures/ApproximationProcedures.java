@@ -53,6 +53,101 @@ public class ApproximationProcedures {
     public static String inputFile2 = "approximation_train_2.txt";
     public static String testFile = "approximation_test.txt";
 
+
+    /**
+     * @param epochs        - number of epochs network will be train
+     * @param hiddenNeurons - number of neurons on hidden layer
+     * @param outputFile    - reports will start with this file name
+     */
+    public static void performApproximaOdpowiedz(int epochs, int hiddenNeurons, String outputFile, String inputFile) {
+        String errorsFilePathLearnSet = "_approximation_learn_error_ODP.txt";
+        //String errorsFilePathTestSet = "_approximation_test_error_ODP.txt";
+
+        String plotFilePath = "_approximationPlot_ODP";
+        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(11, hiddenNeurons, 1);//(int inputNeurons, int outputNeurons, int hiddenNeurons, int hiddenLayers)
+
+        double[][] learningSet = FileUtils.loadCSVArrays(inputFile);
+        //learningSet = Utils.normalizeData(learningSet);
+        //TODO mamy normalizowac dane?
+
+        //double[][] testingSet = FileUtils.loadDataArrays(testFile);
+        //TODO mamy wydzielic zbior testowy ze zbioru uczacego?
+
+        File f = new File(errorsFilePathLearnSet);
+        f.delete();
+        //File f2 = new File(errorsFilePathTestSet);
+        //f2.delete();
+
+        double err = 0;
+
+        for (int i = 0; i < epochs; i++) {
+            //epoka nauki
+            err = 0;
+            double[][] mixedSet = Utils.shake(learningSet);
+            for (double[] data : mixedSet) {
+                double[] input = new double[]{data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10]};
+                network.learn(input, new double[]{data[11]});
+                err = err + Utils.countError(network.output(input)[0], data[11]);
+            }
+            err = err / mixedSet.length;
+            FileUtils.addPoint(errorsFilePathLearnSet, new double[]{i, err});
+            if (i % 10 == 0) {
+                System.out.println("epoka: " + i);
+            }
+            //liczenie bledu ze zbioru testowego
+            //err = 0;
+            //mixedSet = testingSet;//Utils.shake(testingSet);
+            //for (double[] data : mixedSet) {
+            //    err = err + Utils.countError(network.output(new double[]{data[0]})[0], data[1]);
+            //}
+            //err = err / mixedSet.length;
+            //FileUtils.addPoint(errorsFilePathTestSet, new double[]{i, err});
+        }
+
+        //network.print();
+
+        DecimalFormat df = new DecimalFormat("0.00000");
+        String wineColor = "Nieznany";
+        if (inputFile.contains("white")) {
+            wineColor = "Biale wino";
+        }
+        if (inputFile.contains("red")) {
+            wineColor = "Czerwone wino";
+        }
+        String header = "Epoki: " + epochs + ", ostatni blad: " + df.format(err) +
+                ",\\n step: " + ConnectedNeuron.STEP + ", " +
+                "momentum: " + ConnectedNeuron.MOMENTUM + ", bias: " + ConnectedNeuron.BIAS_ENABLED +
+                ",  " + hiddenNeurons + " neurony ukryte. ";
+
+        //ApproximationProcedures.drawFunction(network, outputFile + "Functions", header);
+
+        //generowanie raportu z błędami wyliczonymi z danych testowych
+        ApproximationProcedures.saveErrorPlotCommand(plotFilePath,
+                outputFile + "TLError.png",
+                errorsFilePathLearnSet,
+                "brak",
+                "Blad sredniokwadratowy. " + wineColor + "\\n" + header);
+
+        try {
+            Utils.runGnuplotScript(plotFilePath);
+            System.out.println("Wygenerowano pliki raportu: " + outputFile);
+        } catch (IOException ex) {
+            System.out.println("Wystapil blad przy rysowaniu wykresu " + outputFile);
+        }
+
+        f = new File(errorsFilePathLearnSet);
+        //f.delete();
+        //f = new File(errorsFilePathTestSet);
+        //f.delete();
+        f = new File(plotFilePath);
+        //f.delete();
+        f = new File(outputFile + "FunctionsPlot");
+        //f.delete();
+        f = new File(outputFile + "FunctionsTmp.txt");
+        //f.delete();
+    }
+
+
     public static void generateReports() {
         int hiddenNeurons;
         int epochs;
@@ -62,22 +157,24 @@ public class ApproximationProcedures {
         ConnectedNeuron.BETA = 1.0d;
         ConnectedNeuron.STEP = 0.1d;
         ConnectedNeuron.MOMENTUM = 0.2d;
-        ConnectedNeuron.BIAS_ENABLED = true;
+        ConnectedNeuron.BIAS_ENABLED = false;
         epochs = 3000;
         //dla powyzszych danych liczy i rysuje wykresy dla sieci z neuronami od 1 do 20
         //mozna sprawdzic co sie dzieje z innymi parametrami powyzej
-        for (hiddenNeurons = 1; hiddenNeurons <= 20; hiddenNeurons++) {
-            String outputFile1 = outputFile + hiddenNeurons + "epochs";
-            ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile1 + "a", true);
-            ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile1 + "b", false);
+        for (hiddenNeurons = 999; hiddenNeurons <= 20; hiddenNeurons++) {
+            if (hiddenNeurons == 5 || hiddenNeurons == 15) {
+                String outputFile1 = outputFile + hiddenNeurons + "epochs";
+                ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile1 + "a", true);
+                ApproximationProcedures.performApproximation(epochs, hiddenNeurons, outputFile1 + "b", false);
+            }
         }
 
         //tylko jeden przypadek, mozna dodac inne
         hiddenNeurons = 15;
         String outputFile1 = outputFile + hiddenNeurons + "error";
-        expectedError = 0.1d;
+        expectedError = 0.3d;
         ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile1 + "a", true);
-        ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile1 + "b", false);
+        //ApproximationProcedures.performApproximation(expectedError, hiddenNeurons, outputFile1 + "b", false);
     }
 
     /**
@@ -91,7 +188,8 @@ public class ApproximationProcedures {
 
         String plotFilePath = "_approximationPlot";
         //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
-        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(hiddenNeurons);
+        //(int inputNeurons, int hiddenNeurons, int hiddenLayers)
+        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(1, hiddenNeurons, 1);
         double[][] learningSet;
         if (learningSet1) {
             learningSet = FileUtils.loadDataArrays(ApproximationProcedures.inputFile1);
@@ -182,7 +280,7 @@ public class ApproximationProcedures {
 
         String plotFilePath = "_approximationPlot";
         //ConnectedNeuralNetwork network = new ConnectedNeuralNetwork(1, 1, hiddenNeurons, 1);
-        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(hiddenNeurons);
+        ConnectedNeuralNetwork network = new NeuralNetworkApproximation(1, hiddenNeurons, 1);
         double[][] learningSet;
         if (learningSet1) {
             learningSet = FileUtils.loadDataArrays(ApproximationProcedures.inputFile1);
@@ -198,7 +296,7 @@ public class ApproximationProcedures {
         f2.delete();
         double err = Double.MAX_VALUE;
 
-        while (err >= expectedError && epochs < maxEpochs) {
+        while (err > expectedError && epochs < maxEpochs) {
             //epoka nauki
             double[][] mixedSet = Utils.shake(learningSet);
             err = 0d;
@@ -275,7 +373,7 @@ public class ApproximationProcedures {
         try {
             Utils.runGnuplotScript(fileName + "Plot");
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -296,8 +394,8 @@ public class ApproximationProcedures {
             out.println();
             out.close();
         } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
         }
-
     }
 
     private static void saveErrorPlotCommand(String plotFilePath, String outputFilePath, String pointsPathL, String pointsPathT, String plotTitle) {
@@ -312,6 +410,46 @@ public class ApproximationProcedures {
             out.println("\"" + pointsPathL + "\" title \"Learning set\"");
             out.println();
         } catch (FileNotFoundException ex) {
+        }
+    }
+
+
+    private static void drawFunction(ConnectedNeuralNetwork network, String fileName, String header) {
+        double[][] data = new double[160][2];
+        int i = 0;
+        double x = -4.0;
+        while (i < 160) {
+            data[i][0] = x;
+            data[i][1] = network.output(new double[]{x})[0];
+            i++;
+            x = x + 0.05d;
+        }
+        FileUtils.saveArray(fileName + "Tmp.txt", data);
+        ApproximationProcedures.saveFunctionsPlotCommand(fileName + "Plot", fileName + ".png", fileName + "Tmp.txt", "Dane testowe i wyjscia z sieci. " + header);
+        try {
+            Utils.runGnuplotScript(fileName + "Plot");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void saveFunctionsPlotCommand(String plotFilePath, String outputFilePath, String networkPointsPath, String plotTitle) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(plotFilePath))) {
+            out.println("set terminal png size 800,600");
+            out.println("set output '" + outputFilePath + "'");
+            out.println("set title \"" + plotTitle + "\"");
+            //out.println("set style data lines");
+            //out.println("plot \"" + networkPointsPath + "\" title \"Outputs\", \\");
+            //out.println("\"" + ApproximationProcedures.testFile + "\" title \"Test\", \\");
+            //if (learningSet1) {
+            //    out.println("\"" + ApproximationProcedures.inputFile1 + "\" title \"LearningSet1\", \\");
+            //} else {
+            //    out.println("\"" + ApproximationProcedures.inputFile2 + "\" title \"LearningSet2\"");
+            //}
+            out.println();
+            out.close();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
         }
     }
 }

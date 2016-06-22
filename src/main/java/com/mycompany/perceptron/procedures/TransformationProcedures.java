@@ -53,9 +53,9 @@ public class TransformationProcedures {
         ConnectedNeuron.STEP = 0.2d;
         ConnectedNeuron.MOMENTUM = 0.0d;
         ConnectedNeuron.BIAS_ENABLED = true;
-        epochs = 10000;
+        epochs = 1000;
         TransformationProcedures.performTransformation(epochs, hiddenNeurons, outputFile);
-
+/*
         hiddenNeurons = 2;
         outputFile = outputFile.replace('1', '2');
         ConnectedNeuron.BETA = 1.0d;
@@ -132,7 +132,7 @@ public class TransformationProcedures {
         //epochs = 500;
         expectedError = 0.01;
         TransformationProcedures.performTransformation(expectedError, hiddenNeurons, outputFile);
-
+*/
     }
 
     /**

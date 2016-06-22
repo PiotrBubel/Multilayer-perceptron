@@ -11,6 +11,21 @@ import java.util.Random;
  */
 public class Utils {
 
+
+    public static double[][] normalizeData(double[][] in) {
+
+        for (int i = 0; i < in.length; i++) {
+            for (int j = 0; j < in[i].length; j++) {
+                if (in[i][j] > 1d) {
+                    in[i][j] = in[i][j] / 10d;
+                }
+            }
+        }
+
+        return in;
+    }
+
+
     public static double countError(double[] out, double[] exp) {
         double agregatedErrors = 0;
         double[] errors = new double[out.length];
